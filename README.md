@@ -50,6 +50,10 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
         PATCH /products/{product_id}/price
         <!-- Updates the price of a product by its product_id. -->
 
+    Delete a Product
+        DELETE /products/{product_id}
+        <!-- Description: Removes a product from the database by its ID. If the product does not exist, returns a 404 error. -->
+
     Reserve a Product
         POST /products/{product_id}/reserve
         <!-- Reserves a product, decreasing its stock. -->
@@ -81,7 +85,21 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
 
         Response: A list of sold products that match the specified filters, each with details such as name, category, price, sale date, etc.
 
+### Database Migrations
 
+This project uses Alembic for database migrations. To manage database schema changes, follow these steps:
+    - Initialize Alembic (if not already initialized):**
+        ```alembic init alembic```
+
+    - Create a Migration Script: Generate a new migration script based on changes in the models.
+        ```alembic revision --autogenerate -m "Describe your change"```
+
+    - Apply Migrations: To apply migrations to the database, run:
+        ```alembic upgrade head```
+
+    - Downgrade Migrations (if necessary): To revert the latest migration, use:
+        ```alembic downgrade -1```
+        
 ### Running Tests
 
     To run the tests, use:

@@ -28,5 +28,5 @@ class Product(Base):
     is_available = Column(Boolean, default=True)
     sold_date = Column(Date, nullable=True)
 
-    category = relationship("Category")
-    subcategory = relationship("Subcategory")
+    category = relationship("Category", lazy="joined")
+    subcategory = relationship("Subcategory", lazy="joined")
