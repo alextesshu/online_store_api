@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from ..db.database import SessionLocal
 from ..services.products_service import (
     get_product_list, create_product, update_product_price, 
-    reserve_product, cancel_reservation, sell_product, start_promotion, get_sold_products
+    reserve_product, cancel_reservation, sell_product,
+    start_promotion, get_sold_products, get_product_or_404
 )
 from ..schemas import ProductCreate, ProductUpdatePrice, ProductResponse
 from datetime import date
@@ -23,19 +24,15 @@ def get_db():
 def read_products(
     skip: int = 0,
     limit: int = 10,
-    category_id: int = None,
-    subcategory_id: int = None,
+    category_id: Optional[int] = None,
+    subcategory_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
-    products = get_product_list(db, skip=skip, limit=limit, category_id=category_id, subcategory_id=subcategory_id)
-    return products
+    return get_product_list(db, skip=skip, limit=limit, category_id=category_id, subcategory_id=subcategory_id)
 
 @router.get("/products/{product_id}", response_model=ProductResponse)
 def read_product(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return get_product_or_404(db, product_id)
 
 @router.post("/products/", response_model=ProductResponse)
 def add_product(product_data: ProductCreate, db: Session = Depends(get_db)):
@@ -43,23 +40,14 @@ def add_product(product_data: ProductCreate, db: Session = Depends(get_db)):
 
 @router.patch("/products/{product_id}/price", response_model=ProductResponse)
 def change_price(product_id: int, update_data: ProductUpdatePrice, db: Session = Depends(get_db)):
-    product = update_product_price(db, product_id, update_data.new_price)
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return update_product_price(db, product_id, update_data.new_price)
 
 @router.delete("/products/{product_id}", response_model=ProductResponse)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
-    # Fetch the product to check if it exists
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None:
-        # Raise 404 error if product is not found
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
-    
-    # Delete the product if it exists
+    product = get_product_or_404(db, product_id)
     db.delete(product)
     db.commit()
-    return product # Return the deleted product as confirmation
+    return product
 
 @router.post("/products/{product_id}/reserve", response_model=ProductResponse)
 def reserve_item(product_id: int, db: Session = Depends(get_db)):
@@ -75,8 +63,7 @@ def sell_item(product_id: int, db: Session = Depends(get_db)):
 
 @router.patch("/products/{product_id}/start-promotion", response_model=ProductResponse)
 def apply_discount(product_id: int, discount: float, db: Session = Depends(get_db)):
-    product = start_promotion(db, product_id, discount)
-    return product
+    return start_promotion(db, product_id, discount)
 
 @router.get("/products/sold/", response_model=list[ProductResponse])
 def get_sold_products_report(
@@ -85,5 +72,4 @@ def get_sold_products_report(
     category_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
-    products = get_sold_products(db, start_date=start_date, end_date=end_date, category_id=category_id)
-    return products
+    return get_sold_products(db, start_date=start_date, end_date=end_date, category_id=category_id)
