@@ -50,6 +50,10 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
         PATCH /products/{product_id}/price
         <!-- Updates the price of a product by its product_id. -->
 
+    Delete a Product
+        DELETE /products/{product_id}
+        <!-- Description: Removes a product from the database by its ID. If the product does not exist, returns a 404 error. -->
+
     Reserve a Product
         POST /products/{product_id}/reserve
         <!-- Reserves a product, decreasing its stock. -->
