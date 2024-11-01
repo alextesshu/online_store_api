@@ -9,7 +9,6 @@ from ..services.products_service import (
 from ..schemas import ProductCreate, ProductUpdatePrice, ProductResponse
 from datetime import date
 from typing import Optional
-from ..db import models
 
 router = APIRouter()
 
