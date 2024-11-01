@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Alembic migrations
+alembic/versions/*
+
+# Test results
+*.pytest_cache/
+.tox/
+.coverage
+coverage.xml
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.orig
+*.out
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# PDF and other temporary files
+*.pdf
