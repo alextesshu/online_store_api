@@ -1,62 +1,66 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from ..db import models
-from ..schemas import ProductCreate
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
-def get_product_list(db: Session, skip: int = 0, limit: int = 10, category_id: int = None, subcategory_id: int = None):
+def get_product_list(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    category_id: Optional[int] = None,
+    subcategory_id: Optional[int] = None
+    
+) -> List[models.Product]:
     query = db.query(models.Product)
 
-    if category_id:
+    if category_id is not None:
         query = query.filter(models.Product.category_id == category_id)
-    if subcategory_id:
+    if subcategory_id is not None:
         query = query.filter(models.Product.subcategory_id == subcategory_id)
 
     return query.offset(skip).limit(limit).all()
 
-def create_product(db: Session, product_data: dict):
+def get_product_or_404(db: Session, product_id: int) -> models.Product:
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if product is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+    return product
+
+def create_product(db: Session, product_data: dict) -> models.Product:
     product = models.Product(**product_data)
     db.add(product)
     db.commit()
     db.refresh(product)
     return product
 
-def update_product_price(db: Session, product_id: int, new_price: float):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product:
-        product.price = new_price
-        db.commit()
-        db.refresh(product)
+def update_product_price(db: Session, product_id: int, new_price: float) -> Optional[models.Product]:
+    product = get_product_or_404(db, product_id)
+    product.price = new_price
+    db.commit()
+    db.refresh(product)
     return product
 
-def reserve_product(db: Session, product_id: int):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
+def reserve_product(db: Session, product_id: int) -> models.Product:
+    product = get_product_or_404(db, product_id)
     if product.stock <= 0:
-        raise HTTPException(status_code=400, detail="Product is out of stock")
-    
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product is out of stock")
     product.stock -= 1
     db.commit()
     db.refresh(product)
     return product
 
-def cancel_reservation(db: Session, product_id: int):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-
+def cancel_reservation(db: Session, product_id: int) -> models.Product:
+    product = get_product_or_404(db, product_id)
     product.stock += 1
     db.commit()
     db.refresh(product)
     return product
 
-def sell_product(db: Session, product_id: int):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None or product.stock <= 0:
-        raise HTTPException(status_code=400, detail="Product not available for sale")
-    
+def sell_product(db: Session, product_id: int) -> models.Product:
+    product = get_product_or_404(db, product_id)
+    if product.stock <= 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product not available for sale")
     product.stock -= 1
     if product.stock == 0:
         product.is_available = False
@@ -65,20 +69,22 @@ def sell_product(db: Session, product_id: int):
     db.refresh(product)
     return product
 
-def start_promotion(db: Session, product_id: int, discount: float):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    if discount < 0 or discount > 100:
-        raise HTTPException(status_code=400, detail="Discount must be between 0 and 100")
-    
+def start_promotion(db: Session, product_id: int, discount: float) -> models.Product:
+    if not (0 <= discount <= 100):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Discount must be between 0 and 100")
+    product = get_product_or_404(db, product_id)
     product.discount = discount
-    product.price = product.price * (1 - discount / 100)
+    product.price *= (1 - discount / 100)
     db.commit()
     db.refresh(product)
     return product
 
-def get_sold_products(db: Session, start_date: Optional[date] = None, end_date: Optional[date] = None, category_id: Optional[int] = None):
+def get_sold_products(
+    db: Session,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+    category_id: Optional[int] = None
+) -> List[models.Product]:
     query = db.query(models.Product).filter(models.Product.is_available == False)
 
     if start_date:
