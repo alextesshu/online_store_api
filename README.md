@@ -85,6 +85,7 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
 
         Response: A list of sold products that match the specified filters, each with details such as name, category, price, sale date, etc.
 
+
 ### Database Migrations
 
 This project uses Alembic for database migrations. To manage database schema changes, follow these steps:
@@ -100,10 +101,43 @@ This project uses Alembic for database migrations. To manage database schema cha
     - Downgrade Migrations (if necessary): To revert the latest migration, use:
         ```alembic downgrade -1```
         
+
+### Database Setup with Docker
+    To set up a PostgreSQL database with Docker, use the following docker-compose.yml configuration:
+
+    version: '3.8'
+
+    services:
+    postgres:
+        image: postgres:16.0
+        environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: test_store_db
+        ports:
+        - "5432:5432"
+        volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+    volumes:
+    postgres_data:
+
+Run Docker Compose to start the database:
+    ```docker-compose up -d```
+
+### Inserting Test Data
+
+    To insert sample data into the database for testing, run:
+
+```python tests/insert_test_data.py```
+
+This script adds sample categories and subcategories to the database if they do not already exist.
+
+
 ### Running Tests
 
     To run the tests, use:
-        ```pytest tests/test_api.py```
+```pytest tests/test_api.py```
     This runs the tests in tests/test_api.py, which cover the core API functionality.
 
 ### Project Structure
