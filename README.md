@@ -17,8 +17,6 @@ Create and activate a virtual environment:
 Install dependencies:
 ```pip install -r requirements.txt```
 
-
-
 ### Database Setup with Docker
     To set up a PostgreSQL database with Docker, use the following docker-compose.yml configuration:
 
