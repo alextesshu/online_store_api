@@ -19,6 +19,47 @@ Install dependencies:
 
 
 
+### Database Setup with Docker
+    To set up a PostgreSQL database with Docker, use the following docker-compose.yml configuration:
+
+    version: '3.8'
+
+    services:
+    postgres:
+        image: postgres:16.0
+        environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: test_store_db
+        ports:
+        - "5432:5432"
+        volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+    volumes:
+    postgres_data:
+
+Run Docker Compose to start the database:
+    ```docker-compose up -d```
+
+### Database Migrations
+
+After setting up the database, apply the migrations to create the necessary tables:
+```alembic upgrade head```
+
+    - Downgrade Migrations (if necessary): To revert the latest migration, use:
+        ```alembic downgrade -1```
+
+### Initializing Test Data
+    To populate the database with initial test data for categories and subcategories, run the following command after setting up and migrating the database:
+```python insert_test_data.py```
+
+### Running Tests
+
+    To run the tests, use:
+```pytest tests/test_api.py```
+    This runs the tests in tests/test_api.py, which cover the core API functionality.
+
 ### Running the Server
 
 To start the server, use:
@@ -87,50 +128,6 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
 
         Response: A list of sold products that match the specified filters, each with details such as name, category, price, sale date, etc.
 
-
-
-
-### Initializing Test Data
-    To populate the database with initial test data for categories and subcategories, run the following command after setting up and migrating the database:
-```python insert_test_data.py```
-
-### Database Setup with Docker
-    To set up a PostgreSQL database with Docker, use the following docker-compose.yml configuration:
-
-    version: '3.8'
-
-    services:
-    postgres:
-        image: postgres:16.0
-        environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: test_store_db
-        ports:
-        - "5432:5432"
-        volumes:
-        - postgres_data:/var/lib/postgresql/data
-
-    volumes:
-    postgres_data:
-
-Run Docker Compose to start the database:
-    ```docker-compose up -d```
-
-### Database Migrations
-
-After setting up the database, apply the migrations to create the necessary tables:
-```alembic upgrade head```
-
-    - Downgrade Migrations (if necessary): To revert the latest migration, use:
-        ```alembic downgrade -1```
-
-
-### Running Tests
-
-    To run the tests, use:
-```pytest tests/test_api.py```
-    This runs the tests in tests/test_api.py, which cover the core API functionality.
 
 ### Project Structure
     - app/main.py: Main application file where the FastAPI app is initialized.
