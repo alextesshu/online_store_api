@@ -93,14 +93,18 @@ This project uses Alembic for database migrations. To manage database schema cha
         ```alembic init alembic```
 
     - Create a Migration Script: Generate a new migration script based on changes in the models.
-        ```alembic revision --autogenerate -m "Describe your change"```
+```alembic revision --autogenerate -m "Initial migration"```
 
     - Apply Migrations: To apply migrations to the database, run:
-        ```alembic upgrade head```
+```alembic upgrade head```
 
     - Downgrade Migrations (if necessary): To revert the latest migration, use:
         ```alembic downgrade -1```
-        
+
+
+### Initializing Test Data
+    To populate the database with initial test data for categories and subcategories, run the following command after setting up and migrating the database:
+```python insert_test_data.py```
 
 ### Database Setup with Docker
     To set up a PostgreSQL database with Docker, use the following docker-compose.yml configuration:
@@ -124,15 +128,6 @@ This project uses Alembic for database migrations. To manage database schema cha
 
 Run Docker Compose to start the database:
     ```docker-compose up -d```
-
-### Inserting Test Data
-
-    To insert sample data into the database for testing, run:
-
-```python tests/insert_test_data.py```
-
-This script adds sample categories and subcategories to the database if they do not already exist.
-
 
 ### Running Tests
 
