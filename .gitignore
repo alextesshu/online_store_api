@@ -12,9 +12,6 @@ venv/
 # Logs
 *.log
 
-# Alembic migrations
-alembic/versions/*
-
 # Test results
 *.pytest_cache/
 .tox/

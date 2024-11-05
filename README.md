@@ -88,20 +88,6 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
         Response: A list of sold products that match the specified filters, each with details such as name, category, price, sale date, etc.
 
 
-### Database Migrations
-
-This project uses Alembic for database migrations. To manage database schema changes, follow these steps:
-    - Initialize Alembic (if not already initialized):**
-        ```alembic init alembic```
-
-    - Create a Migration Script: Generate a new migration script based on changes in the models.
-```alembic revision --autogenerate -m "Initial migration"```
-
-    - Apply Migrations: To apply migrations to the database, run:
-```alembic upgrade head```
-
-    - Downgrade Migrations (if necessary): To revert the latest migration, use:
-        ```alembic downgrade -1```
 
 
 ### Initializing Test Data
@@ -130,6 +116,15 @@ This project uses Alembic for database migrations. To manage database schema cha
 
 Run Docker Compose to start the database:
     ```docker-compose up -d```
+
+### Database Migrations
+
+After setting up the database, apply the migrations to create the necessary tables:
+```alembic upgrade head```
+
+    - Downgrade Migrations (if necessary): To revert the latest migration, use:
+        ```alembic downgrade -1```
+
 
 ### Running Tests
 
