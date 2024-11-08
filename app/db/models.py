@@ -23,7 +23,6 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey("categories.id"))
     subcategory_id = Column(Integer, ForeignKey("subcategories.id"), nullable=True)
     price = Column(Float)
-    discount = Column(Float, default=0.0)
     stock = Column(Integer, default=0)
     is_available = Column(Boolean, default=True)
     sold_date = Column(Date, nullable=True)
