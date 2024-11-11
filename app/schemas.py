@@ -7,6 +7,7 @@ class ProductBase(BaseModel):
     category_id: int
     price: float = Field(..., gt=0)
     stock: int = Field(..., ge=0)
+    reserved_quantity: int = Field(0, ge=0)
     is_available: Optional[bool] = None
     
     model_config = ConfigDict(from_attributes=True)
