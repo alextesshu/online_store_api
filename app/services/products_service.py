@@ -61,9 +61,10 @@ def cancel_reservation(db: Session, product_id: int) -> models.Product:
 def sell_product(db: Session, product_id: int) -> models.Product:
     product = get_product_or_404(db, product_id)
 
-    if product.stock <= 0 or (product.stock - product.reserved_quantity) <1:
+    if product.reserved_quantity <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product not available for sale")
-    
+
+    # Применение скидки
     discounted_price = apply_discount(db, product_id)
     sale = models.Sale(
         product_id=product_id,
@@ -72,9 +73,7 @@ def sell_product(db: Session, product_id: int) -> models.Product:
         sale_date=date.today()
     )
 
-    if product.reserved_quantity > 0:
-        product.reserved_quantity -= 1
-
+    product.reserved_quantity -= 1
     product.stock -= 1
 
     if product.stock == 0:

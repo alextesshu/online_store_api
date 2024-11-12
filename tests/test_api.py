@@ -4,6 +4,12 @@ from app.main import app
 
 # Utility function to create a category for tests
 async def create_test_category(ac, name="Test Category"):
+    response = await ac.get("/categories/")
+    categories = response.json()
+    for category in categories:
+        if category["name"] == name:
+            return category
+    
     category_data = {
         "name": name
     }

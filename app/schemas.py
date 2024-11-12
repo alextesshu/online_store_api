@@ -16,8 +16,33 @@ class ProductCreate(ProductBase):
     id: None = None
     is_available: None = None
 
+
+class ProductUpdateStock(BaseModel):
+    new_stock: int = Field(..., ge=0)
+
+
 class ProductUpdatePrice(BaseModel):
     new_price: float = Field(..., gt=0)
 
+
+class ProductSell(BaseModel):
+    pass
+
+
 class ProductResponse(ProductBase):
     pass
+
+    class Config:
+        orm_mode = True
+
+
+class CategoryCreate(BaseModel):
+    name: str
+
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
