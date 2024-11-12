@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api import products
+from .api import products, categories
 from .db.database import init_db
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -14,4 +14,8 @@ app.add_middleware(
 )
 
 init_db()
-app.include_router(products.router)
+app.include_router(products.router, prefix="/products", tags=["products"])
+app.include_router(categories.router, prefix="/categories", tags=["categories"])
+
+for route in app.routes:
+    print(route.path, route.name)
