@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.db import models
 from app.db.database import get_db
 from app.schemas import CategoryCreate, CategoryResponse
+from typing import List
 
 router = APIRouter()
 
@@ -18,6 +19,6 @@ def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     db.refresh(new_category)
     return new_category
 
-@router.get("/", response_model=list[CategoryResponse])
+@router.get("/", response_model=List[CategoryResponse])
 def read_categories(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return db.query(models.Category).offset(skip).limit(limit).all()

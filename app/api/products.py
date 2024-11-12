@@ -8,7 +8,7 @@ from ..services.products_service import (
 )
 from ..schemas import ProductCreate, ProductUpdatePrice, ProductResponse
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=list[ProductResponse])
+@router.get("/", response_model=List[ProductResponse])
 def read_products(
     skip: int = 0,
     limit: int = 10,
@@ -64,7 +64,7 @@ def sell_item(product_id: int, db: Session = Depends(get_db)):
 def apply_discount(product_id: int, discount: float, db: Session = Depends(get_db)):
     return start_promotion(db, product_id, discount)
 
-@router.get("/sold/", response_model=list[ProductResponse])
+@router.get("/sold/", response_model=List[ProductResponse])
 def get_sold_products_report(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
