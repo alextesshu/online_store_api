@@ -112,7 +112,6 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
         <!-- Applies a discount to a specific product by updating its discount field and adjusting its price based on the discount percentage. -->
 
         Parameters:
-            - product_id (path parameter): The ID of the product to apply the discount to.
             - discount (query parameter): A percentage (0-100) representing the discount to apply to the product.
 
     Sales Report Endpoint
@@ -123,8 +122,6 @@ The application will be available at http://127.0.0.1:8000, and the Swagger docu
             - start_date (optional): The start date for filtering sold products.
             - end_date (optional): The end date for filtering sold products.
             - category_id (optional): The ID of the category to filter products by category.
-
-        Response: A list of sold products that match the specified filters, each with details such as name, category, price, sale date, etc.
 
 
 ### Project Structure
